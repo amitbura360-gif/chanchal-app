@@ -1,18 +1,18 @@
 {
-  "name": "Chanchal",
-  "short_name": "Chanchal",
-  "start_url": "./myappindex.html",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#101010",
-  "theme_color": "#7c2cff",
-  "description": "Chanchal social and customer care app",
-  "icons": [
-    {
-      "src": "./icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+"name": "Chanchal",
+"short_name": "Chanchal",
+"start_url": "./myappindex.html",
+"scope": "./",
+"display": "standalone",
+"background_color": "#101010",
+"theme_color": "#7c2cff",
+"description": "Chanchal social and customer care app",
+"icons": [
+{
+"src": "./icon.svg",
+"sizes": "any",
+"type": "image/svg+xml",
+"purpose": "any maskable"
+}
+]
 }
