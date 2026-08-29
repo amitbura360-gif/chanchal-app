@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Chanchal</title>
+<meta name="theme-color" content="#7c2cff">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+
+<style>
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+background:#101010;
+color:#fff;
+font-family:Arial,sans-serif;
+}
+
+.splash{
+position:fixed;
+inset:0;
+z-index:9999;
+background:#101010;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.splashBox{
+text-align:center;
+animation:fadeIn .8s ease;
+}
+
+.splashIcon{
+width:125px;
+height:125px;
+border-radius:32px;
+display:block;
+margin:0 auto 25px;
+box-shadow:0 15px 45px #0009;
+}
+
+.splashName{
+font-size:42px;
+font-weight:bold;
+letter-spacing:1px;
+}
+
+.splashText{
+color:#888;
+font-size:14px;
+margin-top:10px;
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:scale(.92);
+}
+to{
+opacity:1;
+transform:scale(1);
+}
+}
+
+.page{
+min-height:100vh;
+padding:25px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.box{
+width:100%;
+max-width:480px;
+}
+
+.logo{
+width:90px;
+height:90px;
+border-radius:28px;
+margin:0 auto 25px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:45px;
+font-weight:bold;
+background:linear-gradient(135deg,#7c2cff,#ff198b);
+box-shadow:0 10px 35px #0008;
+}
+
+h1{
+text-align:center;
+font-size:38px;
+margin:10px 0;
+}
+
+.sub{
+text-align:center;
+color:#aaa;
+font-size:17px;
+margin-bottom:35px;
+}
+
+.card{
+background:#1c1c1c;
+border:1px solid #333;
+border-radius:22px;
+padding:22px;
+margin-bottom:18px;
+}
+
+label{
+display:block;
+margin:15px 0 8px;
+font-size:16px;
+color:#ddd;
+}
+
+input{
+width:100%;
+padding:16px;
+border-radius:14px;
+border:1px solid #444;
+background:#252525;
+color:white;
+font-size:16px;
+outline:none;
+}
+
+input:focus{
+border-color:#a52cff;
+}
+
+button{
+width:100%;
+padding:16px;
+margin-top:18px;
+border:0;
+border-radius:15px;
+background:linear-gradient(135deg,#7c2cff,#ff198b);
+color:white;
+font-size:17px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.hidden{
+display:none;
+}
+
+.header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:20px;
+}
+
+.header h2{
+margin:0;
+}
+
+.logout{
+width:auto;
+padding:10px 15px;
+margin:0;
+font-size:13px;
+}
+
+.profile{
+text-align:center;
+}
+
+.avatar{
+width:90px;
+height:90px;
+border-radius:50%;
+margin:auto;
+background:linear-gradient(135deg,#7c2cff,#ff198b);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:38px;
+font-weight:bold;
+}
+
+.chat{
+height:55vh;
+overflow-y:auto;
+padding:10px 0;
+}
+
+.msg{
+max-width:80%;
+padding:12px 15px;
+border-radius:16px;
+margin:8px 0;
+word-wrap:break-word;
+}
+
+.me{
+margin-left:auto;
+background:#7c2cff;
+}
+
+.admin{
+margin-right:auto;
+background:#292929;
+}
+
+.chatbar{
+display:flex;
+gap:8px;
+}
+
+.chatbar input{
+flex:1;
+}
+
+.chatbar button{
+width:80px;
+margin:0;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="splash" class="splash">
+
+<div class="splashBox">
+
+<img
+src="icon.svg"
+class="splashIcon"
+alt="Chanchal">
+
+<div class="splashName">
+Chanchal
+</div>
+
+<div class="splashText">
+Connect safely and privately
+</div>
+
+</div>
+
+</div>
+
+
+<div id="signupPage" class="page">
+
+<div class="box">
+
+<div class="logo">
+C
+</div>
+
+<h1>
+Chanchal
+</h1>
+
+<div class="sub">
+Connect safely and privately
+</div>
+
+<div class="card">
+
+<label>
+Your Name
+</label>
+
+<input
+id="name"
+type="text"
+placeholder="Enter your name">
+
+<label>
+Mobile Number
+</label>
+
+<input
+id="phone"
+type="tel"
+placeholder="Enter mobile number">
+
+<button onclick="continueProfile()">
+Continue
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="profilePage" class="page hidden">
+
+<div class="box">
+
+<div class="header">
+
+<h2>
+Your Profile
+</h2>
+
+<button
+class="logout"
+onclick="logout()">
+Logout
+</button>
+
+</div>
+
+<div class="card profile">
+
+<div
+id="avatar"
+class="avatar">
+C
+</div>
+
+<h2 id="profileName">
+User
+</h2>
+
+<div
+id="profilePhone"
+class="sub">
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>
+Customer Care
+</h3>
+
+<p
+class="sub"
+style="text-align:left">
+
+Need help? Chat directly with Customer Care.
+
+</p>
+
+<button onclick="openChat()">
+Open Customer Care Chat
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="chatPage" class="page hidden">
+
+<div class="box">
+
+<div class="header">
+
+<h2>
+Customer Care
+</h2>
+
+<button
+class="logout"
+onclick="backProfile()">
+Back
+</button>
+
+</div>
+
+<div class="card">
+
+<div
+id="chatMessages"
+class="chat">
+</div>
+
+<div class="chatbar">
+
+<input
+id="messageInput"
+type="text"
+placeholder="Type your message">
+
+<button onclick="sendMessage()">
+Send
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+import {
+getDatabase,
+ref,
+push,
+set,
+onChildAdded
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyCNSUPfxSqJ1XwhIP5o-OHmVbGxs9DEyoI",
+
+authDomain:
+"myapp-7f265.firebaseapp.com",
+
+databaseURL:
+"https://myapp-7f265-default-rtdb.firebaseio.com",
+
+projectId:
+"myapp-7f265",
+
+storageBucket:
+"myapp-7f265.firebasestorage.app",
+
+messagingSenderId:
+"307312975781",
+
+appId:
+"1:307312975781:web:44df62abc416ba7f68924c"
+
+};
+
+
+const app=
+initializeApp(firebaseConfig);
+
+const db=
+getDatabase(app);
+
+
+let currentUserData=null;
+
+let messagesLoaded=false;
+
+let userId=null;
+
+
+/* SPLASH */
+
+setTimeout(function(){
+
+document
+.getElementById("splash")
+.style
+.display="none";
+
+},2000);
+
+
+/* CREATE USER ID */
+
+function createUserId(){
+
+return "user_" +
+Date.now() +
+"_" +
+Math.random()
+.toString(36)
+.substring(2,8);
+
+}
+
+
+/* CONTINUE */
+
+window.continueProfile=async function(){
+
+const name=
+document
+.getElementById("name")
+.value
+.trim();
+
+const phone=
+document
+.getElementById("phone")
+.value
+.trim();
+
+
+if(!name){
+
+alert("Please enter your name");
+
+return;
+
+}
+
+
+if(!phone){
+
+alert("Please enter your mobile number");
+
+return;
+
+}
+
+
+/*
+Agar pehle se same browser ka user hai
+to wahi ID use hogi.
+*/
+
+const oldUser=
+localStorage.getItem(
+"chanchalUser"
+);
+
+
+if(oldUser){
+
+try{
+
+const oldData=
+JSON.parse(oldUser);
+
+if(oldData.userId){
+
+userId=
+oldData.userId;
+
+}
+
+}catch(e){
+
+console.log(e);
+
+}
+
+}
+
+
+/*
+Agar ID nahi hai to nayi ID banao.
+*/
+
+if(!userId){
+
+userId=
+createUserId();
+
+}
+
+
+/* USER DATA */
+
+currentUserData={
+
+userId:userId,
+
+name:name,
+
+phone:phone
+
+};
+
+
+/*
+LOCAL STORAGE
+*/
+
+localStorage.setItem(
+
+"chanchalUser",
+
+JSON.stringify(
+currentUserData
+)
+
+);
+
+
+/*
+FIREBASE PROFILE
+Admin panel isi profile ko
+read karega.
+*/
+
+try{
+
+await set(
+
+ref(
+db,
+"customerCare/chats/" +
+userId +
+"/profile"
+),
+
+{
+
+name:name,
+
+mobile:phone
+
+}
+
+);
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Firebase connection error: " +
+error.message
+);
+
+return;
+
+}
+
+
+showProfile();
+
+};
+
+
+/* SHOW PROFILE */
+
+function showProfile(){
+
+document
+.getElementById("signupPage")
+.classList
+.add("hidden");
+
+
+document
+.getElementById("chatPage")
+.classList
+.add("hidden");
+
+
+document
+.getElementById("profilePage")
+.classList
+.remove("hidden");
+
+
+document
+.getElementById("profileName")
+.innerText=
+currentUserData.name;
+
+
+document
+.getElementById("profilePhone")
+.innerText=
+currentUserData.phone;
+
+
+document
+.getElementById("avatar")
+.innerText=
+currentUserData.name
+.charAt(0)
+.toUpperCase();
+
+}
+
+
+/* OPEN CHAT */
+
+window.openChat=function(){
+
+if(!currentUserData){
+
+return;
+
+}
+
+
+document
+.getElementById("profilePage")
+.classList
+.add("hidden");
+
+
+document
+.getElementById("chatPage")
+.classList
+.remove("hidden");
+
+
+loadMessages();
+
+};
+
+
+/* BACK */
+
+window.backProfile=function(){
+
+document
+.getElementById("chatPage")
+.classList
+.add("hidden");
+
+
+document
+.getElementById("profilePage")
+.classList
+.remove("hidden");
+
+};
+
+
+/* SEND MESSAGE */
+
+window.sendMessage=async function(){
+
+const input=
+document
+.getElementById("messageInput");
+
+const text=
+input.value
+.trim();
+
+
+if(
+!text ||
+!currentUserData ||
+!userId
+){
+
+return;
+
+}
+
+
+try{
+
+await push(
+
+ref(
+db,
+"customerCare/chats/" +
+userId +
+"/messages"
+),
+
+{
+
+message:text,
+
+sender:"user",
+
+timestamp:
+Date.now()
+
+}
+
+);
+
+
+input.value="";
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Message send nahi hua: " +
+error.message
+);
+
+}
+
+};
+
+
+/* LOAD MESSAGES */
+
+function loadMessages(){
+
+if(
+messagesLoaded ||
+!userId
+){
+
+return;
+
+}
+
+messagesLoaded=true;
+
+
+const messagesRef=
+
+ref(
+db,
+"customerCare/chats/" +
+userId +
+"/messages"
+);
+
+
+onChildAdded(
+
+messagesRef,
+
+(snapshot)=>{
+
+const data=
+snapshot.val();
+
+
+if(!data){
+
+return;
+
+}
+
+
+displayMessage(
+
+data.message,
+
+data.sender
+
+);
+
+}
+
+);
+
+}
+
+
+/* DISPLAY MESSAGE */
+
+function displayMessage(
+text,
+sender
+){
+
+const container=
+document
+.getElementById(
+"chatMessages"
+);
+
+
+const div=
+document
+.createElement("div");
+
+
+div.className=
+"msg " +
+(
+sender==="user"
+?
+"me"
+:
+"admin"
+);
+
+
+div.innerText=
+text;
+
+
+container.appendChild(div);
+
+
+container.scrollTop=
+container.scrollHeight;
+
+}
+
+
+/* LOGOUT */
+
+window.logout=function(){
+
+localStorage.removeItem(
+"chanchalUser"
+);
+
+location.reload();
+
+};
+
+
+/* LOAD SAVED USER */
+
+const savedUser=
+localStorage.getItem(
+"chanchalUser"
+);
+
+
+if(savedUser){
+
+try{
+
+currentUserData=
+JSON.parse(savedUser);
+
+userId=
+currentUserData.userId;
+
+
+/*
+Purane version ka user ho sakta hai
+jisme userId nahi thi.
+Aise case me profile page dikhane
+ke bajay user ko dobara Continue
+karna padega.
+*/
+
+if(userId){
+
+showProfile();
+
+}
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
