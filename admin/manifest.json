@@ -1,0 +1,18 @@
+{
+"name": "Chanchal Admin",
+"short_name": "Chanchal Admin",
+"start_url": "./index.html",
+"scope": "./",
+"display": "standalone",
+"background_color": "#121212",
+"theme_color": "#ec4899",
+"description": "Chanchal Customer Care Admin Panel",
+"icons": [
+{
+"src": "./icon.svg",
+"sizes": "any",
+"type": "image/svg+xml",
+"purpose": "any maskable"
+}
+]
+}
