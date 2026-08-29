@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -228,6 +229,7 @@ margin:0;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -252,7 +254,6 @@ Connect safely and privately
 </div>
 
 </div>
-
 
 <div id="signupPage" class="page">
 
@@ -300,7 +301,6 @@ Continue
 
 </div>
 
-
 <div id="profilePage" class="page hidden">
 
 <div class="box">
@@ -314,8 +314,7 @@ Your Profile
 <button
 class="logout"
 onclick="logout()">
-Logout
-</button>
+Logout </button>
 
 </div>
 
@@ -362,7 +361,6 @@ Open Customer Care Chat
 
 </div>
 
-
 <div id="chatPage" class="page hidden">
 
 <div class="box">
@@ -376,8 +374,7 @@ Customer Care
 <button
 class="logout"
 onclick="backProfile()">
-Back
-</button>
+Back </button>
 
 </div>
 
@@ -407,7 +404,6 @@ Send
 
 </div>
 
-
 <script type="module">
 
 import {
@@ -426,6 +422,14 @@ onChildAdded
 }
 from
 "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+
+import {
+getMessaging,
+getToken
+}
+from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
 
 const firebaseConfig={
@@ -460,12 +464,23 @@ initializeApp(firebaseConfig);
 const db=
 getDatabase(app);
 
+const messaging=
+getMessaging(app);
+
 
 let currentUserData=null;
 
 let messagesLoaded=false;
 
 let userId=null;
+
+
+/*
+Firebase Web Push VAPID public key
+*/
+
+const VAPID_KEY=
+"BK_v9gpOndpIBt44K2iiSFADmF6LKtFcbXaRr6zSeouEufrFW18YNX465U41V267iWMNsYBd2WLYE-Uvsn73qUU";
 
 
 /* SPLASH */
@@ -490,6 +505,136 @@ Date.now() +
 Math.random()
 .toString(36)
 .substring(2,8);
+
+}
+
+
+/* NOTIFICATION REGISTRATION */
+
+async function registerCustomerNotification(){
+
+if(!userId){
+
+console.log(
+"Notification registration skipped: userId missing"
+);
+
+return;
+
+}
+
+
+try{
+
+if(
+!("Notification" in window)
+){
+
+console.log(
+"Notifications are not supported."
+);
+
+return;
+
+}
+
+
+const permission=
+await Notification.requestPermission();
+
+
+if(
+permission!=="granted"
+){
+
+console.log(
+"Notification permission denied."
+);
+
+return;
+
+}
+
+
+/*
+FCM service worker
+*/
+
+const registration=
+await navigator.serviceWorker.register(
+"./firebase-messaging-sw.js"
+);
+
+
+/*
+Get FCM token
+*/
+
+const token=
+await getToken(
+messaging,
+{
+
+vapidKey:VAPID_KEY,
+
+serviceWorkerRegistration:
+registration
+
+}
+);
+
+
+if(!token){
+
+console.log(
+"FCM token was not generated."
+);
+
+return;
+
+}
+
+
+/*
+Save device token
+*/
+
+await set(
+
+ref(
+db,
+"customerCare/chats/" +
+userId +
+"/tokens/" +
+token
+),
+
+{
+
+createdAt:
+Date.now(),
+
+platform:
+"web"
+
+}
+
+);
+
+
+console.log(
+"Customer notification registered successfully."
+);
+
+
+}catch(error){
+
+console.error(
+"Notification registration failed:",
+error
+);
+
+}
 
 }
 
@@ -530,8 +675,7 @@ return;
 
 
 /*
-Agar pehle se same browser ka user hai
-to wahi ID use hogi.
+Existing user ID
 */
 
 const oldUser=
@@ -564,7 +708,7 @@ console.log(e);
 
 
 /*
-Agar ID nahi hai to nayi ID banao.
+Create new ID
 */
 
 if(!userId){
@@ -588,9 +732,7 @@ phone:phone
 };
 
 
-/*
-LOCAL STORAGE
-*/
+/* LOCAL STORAGE */
 
 localStorage.setItem(
 
@@ -603,11 +745,7 @@ currentUserData
 );
 
 
-/*
-FIREBASE PROFILE
-Admin panel isi profile ko
-read karega.
-*/
+/* FIREBASE PROFILE */
 
 try{
 
@@ -645,6 +783,13 @@ return;
 
 
 showProfile();
+
+
+/*
+Register notifications
+*/
+
+registerCustomerNotification();
 
 };
 
@@ -938,17 +1083,16 @@ userId=
 currentUserData.userId;
 
 
-/*
-Purane version ka user ho sakta hai
-jisme userId nahi thi.
-Aise case me profile page dikhane
-ke bajay user ko dobara Continue
-karna padega.
-*/
-
 if(userId){
 
 showProfile();
+
+/*
+Register notification for
+already logged-in user
+*/
+
+registerCustomerNotification();
 
 }
 
