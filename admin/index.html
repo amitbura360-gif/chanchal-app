@@ -47,6 +47,13 @@ body{
     border-radius:12px;
     margin-bottom:10px;
     cursor:pointer;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-touch-callout:none;
+}
+
+.user-card:active{
+    opacity:0.8;
 }
 
 .user-name{
@@ -172,7 +179,8 @@ import {
     ref,
     onValue,
     onChildAdded,
-    push
+    push,
+    remove
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
@@ -278,6 +286,13 @@ onValue(
             };
 
 
+            addLongPressDelete(
+                card,
+                child.key,
+                profile.name || "this user"
+            );
+
+
             userList.appendChild(card);
 
         });
@@ -285,6 +300,195 @@ onValue(
     }
 
 );
+
+
+/* LONG PRESS DELETE */
+
+function addLongPressDelete(
+    element,
+    userId,
+    userName
+){
+
+    let pressTimer = null;
+
+    let longPressTriggered = false;
+
+
+    function startPress(){
+
+        longPressTriggered = false;
+
+
+        pressTimer =
+        setTimeout(
+            function(){
+
+                longPressTriggered = true;
+
+
+                const confirmDelete =
+                confirm(
+                    "Delete chat of " +
+                    userName +
+                    "?\n\nThis will permanently delete this user's profile and complete chat from Firebase."
+                );
+
+
+                if(confirmDelete){
+
+                    deleteUserChat(
+                        userId
+                    );
+
+                }
+
+            },
+            700
+        );
+
+    }
+
+
+    function cancelPress(){
+
+        if(pressTimer !== null){
+
+            clearTimeout(
+                pressTimer
+            );
+
+            pressTimer = null;
+
+        }
+
+    }
+
+
+    element.addEventListener(
+        "touchstart",
+        startPress,
+        {
+            passive:true
+        }
+    );
+
+
+    element.addEventListener(
+        "touchend",
+        cancelPress
+    );
+
+
+    element.addEventListener(
+        "touchcancel",
+        cancelPress
+    );
+
+
+    element.addEventListener(
+        "touchmove",
+        cancelPress
+    );
+
+
+    element.addEventListener(
+        "mousedown",
+        startPress
+    );
+
+
+    element.addEventListener(
+        "mouseup",
+        cancelPress
+    );
+
+
+    element.addEventListener(
+        "mouseleave",
+        cancelPress
+    );
+
+
+    element.addEventListener(
+        "contextmenu",
+        function(event){
+
+            event.preventDefault();
+
+        }
+    );
+
+}
+
+
+/* DELETE USER CHAT */
+
+function deleteUserChat(
+    userId
+){
+
+    const userRef =
+    ref(
+        database,
+        "customerCare/chats/" +
+        userId
+    );
+
+
+    remove(userRef)
+
+    .then(function(){
+
+        if(selectedUserId === userId){
+
+            selectedUserId = "";
+
+
+            document
+            .getElementById("userList")
+            .style.display = "block";
+
+
+            document
+            .getElementById("chatArea")
+            .style.display = "none";
+
+
+            document
+            .getElementById("adminChatBox")
+            .innerHTML = "";
+
+
+            document
+            .getElementById("profileInfo")
+            .innerHTML = "";
+
+        }
+
+
+        alert(
+            "Chat deleted successfully."
+        );
+
+    })
+
+    .catch(function(error){
+
+        console.error(
+            "Delete error:",
+            error
+        );
+
+
+        alert(
+            "Chat delete nahi hui.\n\n" +
+            error.message
+        );
+
+    });
+
+}
 
 
 window.openChat = function(
