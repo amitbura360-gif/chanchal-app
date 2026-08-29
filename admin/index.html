@@ -1,3 +1,5 @@
+
+```html
 <!DOCTYPE html>
 
 <html lang="en">
@@ -169,6 +171,7 @@ Send
 
 </div>
 
+
 <script type="module">
 
 import { initializeApp }
@@ -180,9 +183,16 @@ import {
     onValue,
     onChildAdded,
     push,
-    remove
+    remove,
+    set
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+import {
+    getMessaging,
+    getToken
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 
 
 const firebaseConfig = {
@@ -194,7 +204,8 @@ const firebaseConfig = {
     databaseURL:
     "https://myapp-7f265-default-rtdb.firebaseio.com",
 
-    projectId: "myapp-7f265",
+    projectId:
+    "myapp-7f265",
 
     storageBucket:
     "myapp-7f265.firebasestorage.app",
@@ -216,7 +227,153 @@ const database =
 getDatabase(app);
 
 
+const messaging =
+getMessaging(app);
+
+
 let selectedUserId = "";
+
+
+/* =====================================================
+   ADMIN FCM NOTIFICATION REGISTRATION
+   ===================================================== */
+
+async function registerAdminNotification(){
+
+    try{
+
+        if(!("Notification" in window)){
+
+            console.log(
+                "This browser does not support notifications."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        Notification permission
+        */
+
+        const permission =
+        await Notification.requestPermission();
+
+
+        if(permission !== "granted"){
+
+            console.log(
+                "Admin notification permission denied."
+            );
+
+            return;
+
+        }
+
+
+        /*
+        Firebase Messaging Service Worker
+        */
+
+        if(!("serviceWorker" in navigator)){
+
+            console.log(
+                "Service Worker is not supported."
+            );
+
+            return;
+
+        }
+
+
+        const messagingRegistration =
+        await navigator.serviceWorker.register(
+            "./firebase-messaging-sw.js",
+            {
+                scope: "./"
+            }
+        );
+
+
+        /*
+        FCM token
+        */
+
+        const token =
+        await getToken(
+            messaging,
+            {
+                vapidKey:
+                "BK_v9gpOndpIBt44K2iiSFADmF6LKtFcbXaRr6zSeouEufrFW18YNX465U41V267iWMNsYBd2WLYE-Uvsn73qUU",
+
+                serviceWorkerRegistration:
+                messagingRegistration
+            }
+        );
+
+
+        if(token){
+
+            /*
+            Admin device token Firebase में save होगा.
+
+            Multiple admin devices भी support होंगे.
+            */
+
+            await set(
+
+                ref(
+                    database,
+                    "customerCare/adminTokens/" +
+                    token
+                ),
+
+                true
+
+            );
+
+
+            console.log(
+                "Admin FCM Token registered successfully."
+            );
+
+        }else{
+
+            console.log(
+                "FCM token nahi mila."
+            );
+
+        }
+
+
+    }catch(error){
+
+        /*
+        Notification की वजह से
+        Admin chat कभी बंद नहीं होगी.
+        */
+
+        console.error(
+            "Admin notification registration error:",
+            error
+        );
+
+    }
+
+}
+
+
+/*
+Admin notification registration शुरू करो
+*/
+
+registerAdminNotification();
+
+
+/* =====================================================
+   CHAT SYSTEM
+   ===================================================== */
 
 
 const chatsRef =
@@ -302,7 +459,9 @@ onValue(
 );
 
 
-/* LONG PRESS DELETE */
+/* =====================================================
+   LONG PRESS DELETE
+   ===================================================== */
 
 function addLongPressDelete(
     element,
@@ -422,7 +581,9 @@ function addLongPressDelete(
 }
 
 
-/* DELETE USER CHAT */
+/* =====================================================
+   DELETE USER CHAT
+   ===================================================== */
 
 function deleteUserChat(
     userId
@@ -490,6 +651,10 @@ function deleteUserChat(
 
 }
 
+
+/* =====================================================
+   OPEN CHAT
+   ===================================================== */
 
 window.openChat = function(
     id,
@@ -591,6 +756,10 @@ window.openChat = function(
 };
 
 
+/* =====================================================
+   SEND ADMIN REPLY
+   ===================================================== */
+
 window.sendReply = function(){
 
     const input =
@@ -646,7 +815,9 @@ window.sendReply = function(){
 };
 
 
-/* ADMIN PWA */
+/* =====================================================
+   EXISTING ADMIN PWA SERVICE WORKER
+   ===================================================== */
 
 if("serviceWorker" in navigator){
 
@@ -678,3 +849,4 @@ if("serviceWorker" in navigator){
 </body>
 
 </html>
+```
